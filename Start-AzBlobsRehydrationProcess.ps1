@@ -72,7 +72,7 @@ function Confirm-AzCliLogin {
         $loginStatus = az account show 2>$null
         if ($loginStatus.id -ne $SubscriptionId) {
           Write-Log -Level ERROR -Message "Subscription change failed. Subscription is not matched."
-          throw
+          exit 1
         }
       }
     }
@@ -211,8 +211,8 @@ function Set-AzBlobsTierToRehydrate {
   }
 }
 
-# Run Script
-# --- Variables ---
+######## Run Script
+######## --- Variables ---
 $tenantId = "00000000-0000-0000-0000-000000000000"
 $subscriptionId = "00000000-0000-0000-0000-000000000000"
 $resourceGroupName = "RgName"
@@ -220,7 +220,7 @@ $storageAccountName = "StorageAccountName"
 $containerName = "ContainerName"
 $blobTierAfterRehydrate = "Hot"
 $rehydratePriority = "Standard"
-# --- End of Variables ---
+######## --- End of Variables ---
 
 $outputFormat = "{
   Container: container,
@@ -260,8 +260,10 @@ $scriptStartTime = Get-TimeNow
 Write-Log -Level INFO -Message "----------------------------------------------"
 Write-Log -Level INFO -Message "Script started at $(ConvertFrom-DateTimeToFormattedString -DateTime $scriptStartTime.DateTime)"
 
+######## ------ 검색 기간 설정 ------
 $startDate = Get-DateTimeFromString -DateTimeString "2024-04-03 00:00:00"
 $endDate = (Get-Date).AddDays(1)
+######## ------ 검색 기간 설정 ------
 
 $storageAccountKey = az storage account keys list `
       --account-name $StorageAccountName `
